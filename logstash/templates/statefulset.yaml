@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: logstash-axis
+spec:
+  selector:
+    matchLabels:
+      app: logstash
+  serviceName: logstash-svc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      hostNetwork: false
+      containers:
+      - name: logstash
+        image: logstash:7.10.1
+        ports:
+        - containerPort: 5516
+          hostPort: 5516
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/logstash/pipeline/logstash.conf
+          subPath: logstash.conf
+      volumes:
+        - name: config-volume
+          configMap:
+            name: logstash-configmap

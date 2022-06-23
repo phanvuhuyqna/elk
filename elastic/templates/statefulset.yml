@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}
+  labels: {{ include "common.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels: {{ include "common.labels" . | nindent 8 }}
+  serviceName: {{.Values.service.name}}
+  replicas: {{ .Values.replicaCount}}
+  template:
+    metadata:
+      labels: {{ include "common.labels" . | nindent 10 }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}
+        image: {{ .Values.image}}
+        imagePullPolicy: {{ .Values.imagePullPolicy}}
+        ports:
+        - name: http
+          containerPort: {{ .Values.ports.http }}
+        - name: transport
+          containerPort: {{ .Values.ports.transport }}
+        volumeMounts:
+        - name: config-volume1
+          mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+          subPath: elasticsearch.yml
+      volumes:
+        - name: config-volume1
+          configMap:
+            name: elastic-configmap

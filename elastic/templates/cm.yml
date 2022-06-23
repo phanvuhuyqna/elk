@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: elastic-configmap
+data:
+  elasticsearch.yml: |
+    http.port: 9200
+    network.host: 0.0.0.0
+    transport.host: localhost
+    transport.tcp.port: 9300
